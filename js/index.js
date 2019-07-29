@@ -76,16 +76,19 @@ addEventListener(
     function getTag(m) {
       return 'best accuracy: ' + m + ' meters';
     }
+    function field(form, name, value) {
+      var field = form.appendChild(document.createElement('input'));
+      field.name = name;
+      field.value = value;
+      return field;
+    }
     function post(coordinates) {
-      return fetch('https://jumprock.co/mail/nohum', {
-        headers: {'Content-Type': 'application/json'},
-        method: 'post',
-        mode: 'cors',
-        body: JSON.stringify({
-          subject: 'No Hum World - Coordinates',
-          message: 'Another place with no Hum: ' + coordinates
-        })
-      });
+      var form = document.body.appendChild(document.createElement('form'));
+      form.method = 'post';
+      form.action = 'https://jumprock.co/mail/nohum';
+      field(form, 'subject', 'No Hum World - Coordinates');
+      field(form, 'message', 'Another place with no Hum: ' + coordinates);
+      form.submit();
     }
   }
 );
