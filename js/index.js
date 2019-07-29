@@ -14,7 +14,9 @@ addEventListener(
     button.addEventListener('click', function () {
       button.disabled = true;
       var textContent = button.textContent;
-      button.textContent = getTag('?');
+      button.classList.remove('is-primary');
+      button.classList.add('is-info');
+      button.textContent = getInfo('?');
       var raf = 0;
       var timeout = setTimeout(
         function () {
@@ -26,16 +28,21 @@ addEventListener(
           post(coordinates)
             .then(function () {
               button.textContent = 'Coordinates sent: Thank You ♥️';
+              button.classList.add('is-success');
             })
             .catch(function () {
               button.textContent = 'Something went wrong, please try again';
+              button.classList.add('is-warning');
             })
             .then(function () {
+              button.classList.remove('is-info');
               setTimeout(
                 function () {
                   map.flyTo([51.505, -0.09], zoom = minZoom);
                   button.textContent = textContent;
                   button.disabled = false;
+                  button.classList.remove('is-success', 'is-warning');
+                  button.classList.add('is-primary');
                 },
                 5000
               );
@@ -56,7 +63,7 @@ addEventListener(
           var acc = Math.min(coords.accuracy, accuracy);
           if (acc < accuracy) {
             accuracy = acc;
-            button.textContent = getTag(acc);
+            button.textContent = getInfo(acc);
           }
           coordinates = [
             coords.latitude,
@@ -89,7 +96,7 @@ addEventListener(
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-    function getTag(m) {
+    function getInfo(m) {
       return 'waiting for best GPS accuracy, currently ' + m + ' meters';
     }
     function field(form, name, value) {
