@@ -116,7 +116,7 @@ addEventListener(
       return new Promise(function (resolve, reject) {
         var date = new Date;
         var form = document.body.appendChild(document.createElement('form'));
-        form.target = '_blank';
+        form.target = '_self';
         form.method = 'post';
         form.action = 'https://jumprock.co/mail/nohum';
         field(
@@ -132,6 +132,11 @@ addEventListener(
           form,
           'message',
           'Another place with no Hum: ' + coordinates
+        );
+        field(
+          form,
+          'after',
+          'https://nohum.world'
         );
         form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
         form.submit();
