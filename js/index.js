@@ -27,7 +27,7 @@ addEventListener(
           map.flyTo([coordinates[0], coordinates[1]], maxZoom);
           post(coordinates)
             .then(function () {
-              button.textContent = 'Coordinates sent: Thank You ♥️';
+              button.textContent = 'Coordinates sent: Thank You ❤️';
               button.classList.add('is-success');
             })
             .catch(function () {
@@ -116,10 +116,20 @@ addEventListener(
         form.target = iframe.name;
         form.method = 'post';
         form.action = 'https://jumprock.co/mail/nohum';
-        field(form, 'subject', 'No Hum World - Coordinates @ ' + [
-          date.getFullYear(), date.getMonth() + 1, date.getDate()
-        ].join('-'));
-        field(form, 'message', 'Another place with no Hum: ' + coordinates);
+        field(
+          form,
+          'subject',
+          'No Hum World - Coordinates @ ' + [
+            date.getFullYear(),
+            ('0' + date.getMonth() + 1).slice(-2),
+            ('0' + date.getDate()).slice(-2)
+          ].join('-')
+        );
+        field(
+          form,
+          'message',
+          'Another place with no Hum: ' + coordinates
+        );
         iframe.style.cssText = form.style.cssText =
           'position:fixed;left:-1000px;top:-1000px;';
         form.submit();
