@@ -3,8 +3,10 @@ addEventListener('load', function () { document.documentElement.style.opacity = 
 addEventListener(
   'DOMContentLoaded',
   function () {
-    var zoom = 2;
+    var minZoom = 2;
+    var maxZoom = 12;
     var delay = 30000;
+    var zoom = minZoom;
     var geolocation = navigator.geolocation;
     var button = document.querySelector('.button.is-primary');
     var bar = document.querySelector('.progress');
@@ -20,7 +22,7 @@ addEventListener(
           geolocation.clearWatch(watcher);
           bar.value = delay;
           button.textContent = textContent;
-          map.flyTo([coordinates[0], coordinates[1]], 12);
+          map.flyTo([coordinates[0], coordinates[1]], maxZoom);
           post(coordinates)
             .then(function () {
               button.textContent = 'Coordinates sent: Thank You ♥️';
@@ -31,7 +33,7 @@ addEventListener(
             .then(function () {
               setTimeout(
                 function () {
-                  map.flyTo([coordinates[0], coordinates[1]], 12);
+                  map.flyTo([51.505, -0.09], zoom = minZoom);
                   button.textContent = textContent;
                   button.disabled = false;
                 },
@@ -62,7 +64,10 @@ addEventListener(
             coords.altitude || 0,
             accuracy
           ];
-          map.flyTo([51.505, -0.09], zoom = 2);
+          map.flyTo(
+            [coordinates[0], coordinates[1]],
+            zoom = Math.min(maxZoom, zoom + 1)
+          );
         },
         function (error) {
           console.error(error);
@@ -77,7 +82,10 @@ addEventListener(
         }
       );
     });
-    var map = L.map('map').setView([51.505, -0.09], zoom++);
+    var map = L.map('map').setView(
+      [51.505, -0.09],
+      zoom = Math.min(maxZoom, zoom + 1)
+    );
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
