@@ -11,7 +11,7 @@ addEventListener(
     var button = document.querySelector('.button.is-primary');
     var bar = document.querySelector('.progress');
     bar.setAttribute('max', delay);
-    button.addEventListener('click', function () {
+    button.addEventListener('click', function prepare() {
       button.disabled = true;
       var textContent = button.textContent;
       button.classList.remove('is-primary');
@@ -23,30 +23,37 @@ addEventListener(
           cancelAnimationFrame(raf);
           geolocation.clearWatch(watcher);
           bar.value = delay;
-          button.textContent = textContent;
           map.flyTo([coordinates[0], coordinates[1]], maxZoom);
-          post(coordinates)
-            .then(function () {
-              button.textContent = 'Coordinates sent: Thank You ❤️';
-              button.classList.add('is-success');
-            })
-            .catch(function () {
-              button.textContent = 'Something went wrong, please try again';
-              button.classList.add('is-warning');
-            })
-            .then(function () {
-              button.classList.remove('is-info');
-              setTimeout(
-                function () {
-                  map.flyTo([51.505, -0.09], zoom = minZoom);
-                  button.textContent = textContent;
-                  button.disabled = false;
-                  button.classList.remove('is-success', 'is-warning');
-                  button.classList.add('is-primary');
-                },
-                5000
-              );
-            });
+          button.removeEventListener('click', prepare);
+          button.addEventListener('click', function send() {
+            button.removeEventListener('click', send);
+            button.addEventListener('click', prepare);
+            button.disabled = true;
+            post(coordinates)
+              .then(function () {
+                button.textContent = 'Coordinates sent: Thank You ❤️';
+                button.classList.add('is-success');
+              })
+              .catch(function () {
+                button.textContent = 'Something went wrong, please try again';
+                button.classList.add('is-warning');
+              })
+              .then(function () {
+                button.classList.remove('is-info');
+                setTimeout(
+                  function () {
+                    map.flyTo([51.505, -0.09], zoom = minZoom);
+                    button.textContent = textContent;
+                    button.disabled = false;
+                    button.classList.remove('is-success', 'is-warning');
+                    button.classList.add('is-primary');
+                  },
+                  5000
+                );
+              });
+            button.textContent = 'Ready to send coordinates';
+            button.disabled = false;
+          });
         },
         delay
       );
