@@ -1,4 +1,11 @@
 addEventListener(
+  'load',
+  function () {
+    document.documentElement.style.opacity = 1;
+  }
+);
+
+addEventListener(
   'DOMContentLoaded',
   function () {
     var zoom = 2;
