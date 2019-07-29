@@ -77,8 +77,8 @@ addEventListener(
           button.disabled = false;
         },
         {
-          enableHighAccuracy: true, 
-          maximumAge        : 0
+          enableHighAccuracy: true,
+          maximumAge: 0
         }
       );
     });
@@ -105,7 +105,7 @@ addEventListener(
         iframe.addEventListener('load', cleanup.bind(resolve));
         iframe.addEventListener('error', cleanup.bind(reject));
         var form = document.body.appendChild(document.createElement('form'));
-        form.target = iframe;
+        form.target = iframe.name;
         form.method = 'post';
         form.action = 'https://jumprock.co/mail/nohum';
         field(form, 'subject', 'No Hum World - Coordinates');
