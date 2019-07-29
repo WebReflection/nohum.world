@@ -10,6 +10,7 @@ addEventListener(
     var geolocation = navigator.geolocation;
     var button = document.querySelector('.button.is-primary');
     var bar = document.querySelector('.progress');
+    var textContent = button.textContent;
     bar.setAttribute('max', delay);
     if (location.search === '?sent') {
       button.classList.remove('is-primary');
@@ -19,13 +20,14 @@ addEventListener(
         function () {
           button.classList.remove('is-success');
           button.classList.add('is-primary');
+          button.textContent = textContent;
+          location.search = '';
         },
-        5000
+        2000
       );
     }
     button.addEventListener('click', function prepare() {
       button.disabled = true;
-      var textContent = button.textContent;
       button.classList.remove('is-primary');
       button.classList.add('is-info');
       button.textContent = getInfo(-1);
