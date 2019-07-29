@@ -9,15 +9,16 @@ addEventListener(
   'DOMContentLoaded',
   function () {
     var zoom = 2;
+    var delay = 30000;
     var geolocation = navigator.geolocation;
     var button = document.querySelector('.button.is-primary');
     var bar = document.querySelector('.progress');
+    bar.setAttribute('max', delay);
     button.addEventListener('click', function () {
       button.disabled = true;
       var textContent = button.textContent;
       button.textContent = getTag('?');
       var raf = 0;
-      var delay = 10000;
       var timeout = setTimeout(
         function () {
           cancelAnimationFrame(raf);
@@ -26,9 +27,21 @@ addEventListener(
           button.textContent = textContent;
           map.flyTo([coordinates[0], coordinates[1]], 12);
           post(coordinates)
-            .then(function (b) { return b.json(); })
-            .then(console.log)
-            .catch(console.error);
+            .then(function () {
+              button.textContent = 'Coordinates sent: Thank You ♥️';
+            })
+            .catch(function () {
+              button.textContent = 'Something went wrong, please try again';
+            })
+            .then(function () {
+              setTimeout(
+                function () {
+                  button.textContent = textContent;
+                  button.disabled = false;
+                },
+                5000
+              );
+            });
         },
         10000
       );
@@ -64,8 +77,7 @@ addEventListener(
         },
         {
           enableHighAccuracy: true, 
-          maximumAge        : 0,
-          timeout           : delay * 2
+          maximumAge        : 0
         }
       );
     });
@@ -74,7 +86,7 @@ addEventListener(
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
     function getTag(m) {
-      return 'best accuracy: ' + m + ' meters';
+      return 'waiting for best GPS accuracy, currently ' + m + ' meters';
     }
     function field(form, name, value) {
       var field = form.appendChild(document.createElement('input'));
@@ -83,12 +95,25 @@ addEventListener(
       return field;
     }
     function post(coordinates) {
-      var form = document.body.appendChild(document.createElement('form'));
-      form.method = 'post';
-      form.action = 'https://jumprock.co/mail/nohum';
-      field(form, 'subject', 'No Hum World - Coordinates');
-      field(form, 'message', 'Another place with no Hum: ' + coordinates);
-      form.submit();
+      return new Promise(function (resolve, reject) {
+        var iframe = document.body.appendChild(document.createElement('iframe'));
+        iframe.name = 'jumprock';
+        iframe.addEventListener('load', cleanup.bind(resolve));
+        iframe.addEventListener('error', cleanup.bind(reject));
+        var form = document.body.appendChild(document.createElement('form'));
+        form.target = iframe;
+        form.method = 'post';
+        form.action = 'https://jumprock.co/mail/nohum';
+        field(form, 'subject', 'No Hum World - Coordinates');
+        field(form, 'message', 'Another place with no Hum: ' + coordinates);
+        iframe.style.cssText = form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
+        form.submit();
+        function cleanup() {
+          document.body.removeChild(form);
+          document.body.removeChild(iframe);
+          this();
+        }
+      });
     }
   }
 );
