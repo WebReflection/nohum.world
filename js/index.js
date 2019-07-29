@@ -48,7 +48,7 @@ addEventListener(
               );
             });
         },
-        10000
+        delay
       );
       var time = Date.now();
       (function progress() {
