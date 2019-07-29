@@ -5,6 +5,7 @@ addEventListener(
   function () {
     var minZoom = 2;
     var maxZoom = 12;
+    var smallDelay = 2500;
     var delay = 30000;
     var zoom = minZoom;
     var geolocation = navigator.geolocation;
@@ -12,18 +13,21 @@ addEventListener(
     var bar = document.querySelector('.progress');
     var textContent = button.textContent;
     bar.setAttribute('max', delay);
-    if (location.search === '?sent') {
+    if (location.hash === '#sent') {
+      localStorage.setItem('coordinates', '[]');
+      button.disabled = true;
       button.classList.remove('is-primary');
       button.textContent = 'Coordinates sent: Thank You ❤️';
       button.classList.add('is-success');
       setTimeout(
         function () {
+          button.textContent = textContent;
+          button.disabled = false;
           button.classList.remove('is-success');
           button.classList.add('is-primary');
-          button.textContent = textContent;
-          location.search = '';
+          location.hash = '';
         },
-        2000
+        smallDelay
       );
     }
     button.addEventListener('click', function prepare() {
@@ -38,11 +42,7 @@ addEventListener(
           geolocation.clearWatch(watcher);
           bar.value = delay;
           map.flyTo([coordinates[0], coordinates[1]], maxZoom);
-          button.removeEventListener('click', prepare);
-          button.addEventListener('click', function send() {
-            button.removeEventListener('click', send);
-            button.addEventListener('click', prepare);
-            button.disabled = true;
+          map.on('moveend', function () {
             post(coordinates)
               .then(function () {
                 button.textContent = 'Coordinates sent: Thank You ❤️';
@@ -62,12 +62,10 @@ addEventListener(
                     button.classList.remove('is-success', 'is-warning');
                     button.classList.add('is-primary');
                   },
-                  5000
+                  smallDelay
                 );
               });
           });
-          button.textContent = 'Ready to send coordinates';
-          button.disabled = false;
         },
         delay
       );
@@ -127,7 +125,10 @@ addEventListener(
       return field;
     }
     function post(coordinates) {
-      return new Promise(function (resolve, reject) {
+      const queue = JSON.parse(localStorage.getItem('coordinates') || '[]');
+      queue.push(coordinates);
+      localStorage.setItem('coordinates', JSON.stringify(queue));
+      return new Promise(function (resolve) {
         var date = new Date;
         var form = document.body.appendChild(document.createElement('form'));
         form.target = '_self';
@@ -145,16 +146,16 @@ addEventListener(
         field(
           form,
           'message',
-          'Another place with no Hum: ' + coordinates
+          JSON.stringify(queue, null, '  ')
         );
         field(
           form,
           'after',
-          'https://nohum.world/?sent'
+          'https://nohum.world/#sent'
         );
         form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
         form.submit();
-        setTimeout(resolve, 5000);
+        setTimeout(resolve, smallDelay);
       });
     }
   }
