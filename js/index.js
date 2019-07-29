@@ -77,15 +77,25 @@ addEventListener(
       return 'best accuracy: ' + m + ' meters';
     }
     function post(coordinates) {
-      return fetch('https://jumprock.co/mail/nohum', {
+      return fetch('https://api.sendgrid.com/v3/mail/send', {
         headers: {
-          'Accept': 'application/json',
+          'Authorization': 'Bearer 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',
           'Content-Type': 'application/json'
         },
         method: 'post',
+        mode: 'cors',
         body: JSON.stringify({
-          subject: 'No Hum World - Coordinates',
-          message: 'Another place with no Hum: ' + coordinates
+          "personalizations": [{
+            "to": [{"email": "andrea.giammarchi@gmail.com"}]
+          }],
+          "from": {
+            "email": "noreply@nohum.world"
+          },
+          "subject": "No Hum World - Coordinates",
+          "content": [{
+            "type": "text/plain",
+            "value":'Another place with no Hum: ' + coordinates
+          }]
         })
       });
     }
