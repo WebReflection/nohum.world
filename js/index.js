@@ -1,9 +1,4 @@
-addEventListener(
-  'load',
-  function () {
-    document.documentElement.style.opacity = 1;
-  }
-);
+addEventListener('load', function () { document.documentElement.style.opacity = 1; });
 
 addEventListener(
   'DOMContentLoaded',
@@ -107,11 +102,11 @@ addEventListener(
         form.action = 'https://jumprock.co/mail/nohum';
         field(form, 'subject', 'No Hum World - Coordinates');
         field(form, 'message', 'Another place with no Hum: ' + coordinates);
-        iframe.style.cssText = form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
+        // iframe.style.cssText = form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
         form.submit();
         function cleanup() {
-          document.body.removeChild(form);
-          document.body.removeChild(iframe);
+          // document.body.removeChild(form);
+          // document.body.removeChild(iframe);
           this();
         }
       });
