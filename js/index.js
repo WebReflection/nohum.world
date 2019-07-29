@@ -51,9 +51,9 @@ addEventListener(
                   5000
                 );
               });
-            button.textContent = 'Ready to send coordinates';
-            button.disabled = false;
           });
+          button.textContent = 'Ready to send coordinates';
+          button.disabled = false;
         },
         delay
       );
