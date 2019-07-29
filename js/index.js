@@ -25,15 +25,10 @@ addEventListener(
           bar.value = delay;
           button.textContent = textContent;
           map.flyTo([coordinates[0], coordinates[1]], 12);
-          setTimeout(
-            function () {
-              location.href = [
-                'mailto:andrea.giammarchi@gmail.com?',
-                'subject=' + encodeURIComponent('No Hum World - Coordinates') + '&',
-                'body=' + encodeURIComponent('Another place with no Hum: ' + coordinates)
-              ].join('');
-            },
-            2000);
+          post(coordinates)
+            .then(function (b) { return b.json(); })
+            .then(console.log)
+            .catch(console.error);
         },
         10000
       );
@@ -80,6 +75,19 @@ addEventListener(
     }).addTo(map);
     function getTag(m) {
       return 'best accuracy: ' + m + ' meters';
+    }
+    function post(coordinates) {
+      return fetch('https://jumprock.co/mail/nohum', {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        method: 'post',
+        body: JSON.stringify({
+          subject: 'No Hum World - Coordinates',
+          message: 'Another place with no Hum: ' + coordinates
+        })
+      });
     }
   }
 );
