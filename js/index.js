@@ -11,6 +11,18 @@ addEventListener(
     var button = document.querySelector('.button.is-primary');
     var bar = document.querySelector('.progress');
     bar.setAttribute('max', delay);
+    if (location.search === '?sent') {
+      button.classList.remove('is-primary');
+      button.textContent = 'Coordinates sent: Thank You ❤️';
+      button.classList.add('is-success');
+      setTimeout(
+        function () {
+          button.classList.remove('is-success');
+          button.classList.add('is-primary');
+        },
+        5000
+      );
+    }
     button.addEventListener('click', function prepare() {
       button.disabled = true;
       var textContent = button.textContent;
@@ -136,7 +148,7 @@ addEventListener(
         field(
           form,
           'after',
-          'https://nohum.world'
+          'https://nohum.world/?sent'
         );
         form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
         form.submit();
