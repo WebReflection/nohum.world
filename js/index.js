@@ -100,6 +100,7 @@ addEventListener(
     }
     function post(coordinates) {
       return new Promise(function (resolve, reject) {
+        var date = new Date;
         var iframe = document.body.appendChild(document.createElement('iframe'));
         iframe.name = 'jumprock';
         iframe.addEventListener('load', cleanup.bind(resolve));
@@ -108,13 +109,16 @@ addEventListener(
         form.target = iframe.name;
         form.method = 'post';
         form.action = 'https://jumprock.co/mail/nohum';
-        field(form, 'subject', 'No Hum World - Coordinates');
+        field(form, 'subject', 'No Hum World - Coordinates @ ' + [
+          date.getFullYear(), date.getMonth() + 1, date.getDate()
+        ].join('-'));
         field(form, 'message', 'Another place with no Hum: ' + coordinates);
-        // iframe.style.cssText = form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
+        iframe.style.cssText = form.style.cssText =
+          'position:fixed;left:-1000px;top:-1000px;';
         form.submit();
         function cleanup() {
-          // document.body.removeChild(form);
-          // document.body.removeChild(iframe);
+          document.body.removeChild(form);
+          document.body.removeChild(iframe);
           this();
         }
       });
