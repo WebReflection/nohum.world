@@ -97,7 +97,7 @@ addEventListener(
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
     function getInfo(m) {
-      return 'waiting for best GPS accuracy, currently ' + m + ' meters';
+      return 'GPS accuracy: ' + m + ' meters';
     }
     function field(form, name, value) {
       var field = form.appendChild(document.createElement('input'));
