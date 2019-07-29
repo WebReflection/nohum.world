@@ -36,6 +36,7 @@ addEventListener(
             .then(function () {
               setTimeout(
                 function () {
+                  map.flyTo([coordinates[0], coordinates[1]], 12);
                   button.textContent = textContent;
                   button.disabled = false;
                 },
@@ -66,7 +67,7 @@ addEventListener(
             coords.altitude || 0,
             accuracy
           ];
-          map.flyTo([coords.latitude, coords.longitude], zoom++);
+          map.flyTo([51.505, -0.09], zoom = 2);
         },
         function (error) {
           console.error(error);
