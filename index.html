@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Hum World</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" media="all">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+  <script src="js/index.js"></script>
+  <style>
+  #map { height: 200px; }
+  </style>
+</head>
+<body>
+  <header></header>
+  <main class="container">
+    <section class="section">
+      <h1 class="title">No Hum World</h1>
+      <h2 class="subtitle">Collecting and validating geo coordinates where <a href="https://thehum.info/">the Hum</a> is absent</h2>
+      <div class="content">
+        <p>
+          <button class="button is-primary">Send Geo Coordinates</button>
+        </p>
+        <p>
+          <progress class="progress" value="0" max="10000">0%</progress>
+        </p>
+      </div>
+    </section>
+    <section id="map"></section>
+  </main>
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        <a href="https://bulma.io"><img src="https://bulma.io/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24"></a>
+      </p>
+      <p class="is-size-7">
+        &copy; Andrea Giammarchi
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
