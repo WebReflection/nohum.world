@@ -16,7 +16,7 @@ addEventListener(
       var textContent = button.textContent;
       button.classList.remove('is-primary');
       button.classList.add('is-info');
-      button.textContent = getInfo('?');
+      button.textContent = getInfo(-1);
       var raf = 0;
       var timeout = setTimeout(
         function () {
@@ -97,7 +97,7 @@ addEventListener(
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
     function getInfo(m) {
-      return 'GPS accuracy: ' + m + ' meters';
+      return 'GPS accuracy: ' + m.toFixed(2) + ' meters';
     }
     function field(form, name, value) {
       var field = form.appendChild(document.createElement('input'));
@@ -108,14 +108,12 @@ addEventListener(
     function post(coordinates) {
       return new Promise(function (resolve, reject) {
         var date = new Date;
-        /*
         var iframe = document.body.appendChild(document.createElement('iframe'));
         iframe.name = 'jumprock';
         iframe.addEventListener('load', cleanup.bind(resolve));
         iframe.addEventListener('error', cleanup.bind(reject));
-        */
         var form = document.body.appendChild(document.createElement('form'));
-        form.target = '_blank';
+        form.target = iframe.name;
         form.method = 'post';
         form.action = 'https://jumprock.co/mail/nohum';
         field(
@@ -132,18 +130,15 @@ addEventListener(
           'message',
           'Another place with no Hum: ' + coordinates
         );
-        // iframe.style.cssText =
+        iframe.style.cssText =
         form.style.cssText =
           'position:fixed;left:-1000px;top:-1000px;';
         form.submit();
-        setTimeout(resolve, 1000);
-        /*
         function cleanup() {
           document.body.removeChild(form);
           document.body.removeChild(iframe);
           this();
         }
-        */
       });
     }
   }
