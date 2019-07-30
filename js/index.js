@@ -24,6 +24,7 @@ addEventListener(
       }());
       var accuracy = Infinity;
       var coordinates = [0, 0, 0, 0];
+      var greatAccuracy = 0;
       var watcher = geolocation.watchPosition(
         function (position) {
           var coords = position.coords;
@@ -42,15 +43,16 @@ addEventListener(
             [coordinates[0], coordinates[1]],
             zoom = Math.min(maxZoom, zoom + 1)
           );
-          if (accuracy <= 5) {
+          if (accuracy < 5 && greatAccuracy++) {
             clear();
+            greatAccuracy = 0;
             (function end() {
-              bar.value++;
-              if (bar.value < delay)
+              bar.value += (delay - bar.value) * .2;
+              if (bar.value < (delay - smallDelay))
                 requestAnimationFrame(end);
               else
                 onposition();
-            });
+            }());
           }
         },
         function (error) {
