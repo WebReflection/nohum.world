@@ -76,6 +76,7 @@ addEventListener(
         bar.value = delay;
         map.flyTo([coordinates[0], coordinates[1]], maxZoom);
         collect.textContent = 'Coordinates saved ❤️';
+        online();
         setTimeout(
           function () {
             map.flyTo(mapCenter, zoom = minZoom);
@@ -112,7 +113,7 @@ addEventListener(
         function () {
           send.textContent = textContent;
           send.classList.remove('is-success');
-          send.classList.add('is-info');
+          send.classList.add('is-primary');
         },
         smallDelay
       );
