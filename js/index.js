@@ -4,71 +4,19 @@ addEventListener(
   'DOMContentLoaded',
   function () {
     var minZoom = 2;
-    var maxZoom = 12;
+    var maxZoom = 20;
     var smallDelay = 2500;
     var delay = 30000;
+    var mapCenter = [51.505, -0.09];
     var zoom = minZoom;
     var geolocation = navigator.geolocation;
-    var button = document.querySelector('.button.is-primary');
-    var bar = document.querySelector('.progress');
-    var textContent = button.textContent;
-    bar.setAttribute('max', delay);
-    if (location.hash === '#sent') {
-      localStorage.setItem('coordinates', '[]');
-      button.disabled = true;
-      button.classList.remove('is-primary');
-      button.textContent = 'Coordinates sent: Thank You ❤️';
-      button.classList.add('is-success');
-      setTimeout(
-        function () {
-          button.textContent = textContent;
-          button.disabled = false;
-          button.classList.remove('is-success');
-          button.classList.add('is-primary');
-          location.hash = '';
-        },
-        smallDelay
-      );
-    }
-    button.addEventListener('click', function prepare() {
-      button.disabled = true;
-      button.classList.remove('is-primary');
-      button.classList.add('is-info');
-      button.textContent = getInfo(-1);
+
+    var collect = document.querySelector('.collect');
+    collect.addEventListener('click', function () {
+      collect.disabled = true;
       var raf = 0;
-      var timeout = setTimeout(
-        function () {
-          cancelAnimationFrame(raf);
-          geolocation.clearWatch(watcher);
-          bar.value = delay;
-          map.flyTo([coordinates[0], coordinates[1]], maxZoom);
-          map.on('moveend', function () {
-            post(coordinates)
-              .then(function () {
-                button.textContent = 'Coordinates sent: Thank You ❤️';
-                button.classList.add('is-success');
-              })
-              .catch(function () {
-                button.textContent = 'Something went wrong, please try again';
-                button.classList.add('is-warning');
-              })
-              .then(function () {
-                button.classList.remove('is-info');
-                setTimeout(
-                  function () {
-                    map.flyTo([51.505, -0.09], zoom = minZoom);
-                    button.textContent = textContent;
-                    button.disabled = false;
-                    button.classList.remove('is-success', 'is-warning');
-                    button.classList.add('is-primary');
-                  },
-                  smallDelay
-                );
-              });
-          });
-        },
-        delay
-      );
+      var textContent = collect.textContent;
+      var timeout = setTimeout(onposition, delay);
       var time = Date.now();
       (function progress() {
         bar.value = Math.min(Date.now() - time, delay);
@@ -77,12 +25,12 @@ addEventListener(
       var accuracy = Infinity;
       var coordinates = [0, 0, 0, 0];
       var watcher = geolocation.watchPosition(
-        function(position) {
+        function (position) {
           var coords = position.coords;
           var acc = Math.min(coords.accuracy, accuracy);
           if (acc < accuracy) {
             accuracy = acc;
-            button.textContent = getInfo(acc);
+            collect.textContent = getInfo(acc);
           }
           coordinates = [
             coords.latitude,
@@ -94,69 +42,133 @@ addEventListener(
             [coordinates[0], coordinates[1]],
             zoom = Math.min(maxZoom, zoom + 1)
           );
+          if (accuracy <= 5) {
+            clear();
+            (function end() {
+              bar.value++;
+              if (bar.value < delay)
+                requestAnimationFrame(end);
+              else
+                onposition();
+            });
+          }
         },
         function (error) {
           console.error(error);
-          cancelAnimationFrame(raf);
-          clearTimeout(timeout);
-          button.textContent = textContent;
-          button.disabled = false;
+          collect.textContent = textContent;
+          collect.disabled = false;
+          clear();
         },
         {
           enableHighAccuracy: true,
           maximumAge: 0
         }
       );
+      function clear() {
+        clearTimeout(timeout);
+        cancelAnimationFrame(raf);
+        geolocation.clearWatch(watcher);
+      }
+      function onposition() {
+        clear();
+        collection.push(coordinates);
+        localStorage.setItem('coordinates', JSON.stringify(collection));
+        bar.value = delay;
+        map.flyTo([coordinates[0], coordinates[1]], maxZoom);
+        collect.textContent = 'Coordinates saved ❤️';
+        setTimeout(
+          function () {
+            map.flyTo(mapCenter, zoom = minZoom);
+            collect.textContent = textContent;
+            collect.disabled = false;
+          },
+          smallDelay * 2
+        );
+      }
     });
-    var map = L.map('map').setView(
-      [51.505, -0.09],
-      zoom = Math.min(maxZoom, zoom + 1)
-    );
+
+    var send = document.querySelector('.send');
+    addEventListener('online', online);
+    send.addEventListener('click', post);
+
+    var bar = document.querySelector('.progress');
+    bar.setAttribute('max', delay);
+
+    var map = L.map('map').setView(mapCenter, minZoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-    function getInfo(m) {
-      return 'GPS accuracy: ' + m.toFixed(2) + ' meters';
+
+    var collection = JSON.parse(localStorage.getItem('coordinates') || '[]');
+    if (location.hash === '#sent') {
+      var textContent = send.textContent;
+      collection.splice(0);
+      localStorage.setItem('coordinates', '[]');
+      send.textContent = 'Coordinates sent: Thank You ❤️';
+      send.classList.remove('is-info');
+      send.classList.add('is-success');
+      location.hash = '';
+      setTimeout(
+        function () {
+          send.textContent = textContent;
+          send.classList.remove('is-success');
+          send.classList.add('is-info');
+        },
+        smallDelay
+      );
+    } else {
+      online();
     }
+
     function field(form, name, value) {
       var field = form.appendChild(document.createElement('input'));
       field.name = name;
       field.value = value;
       return field;
     }
-    function post(coordinates) {
-      const queue = JSON.parse(localStorage.getItem('coordinates') || '[]');
-      queue.push(coordinates);
-      localStorage.setItem('coordinates', JSON.stringify(queue));
-      return new Promise(function (resolve) {
-        var date = new Date;
-        var form = document.body.appendChild(document.createElement('form'));
-        form.target = '_self';
-        form.method = 'post';
-        form.action = 'https://jumprock.co/mail/nohum';
-        field(
-          form,
-          'subject',
-          'No Hum World - Coordinates @ ' + [
-            date.getFullYear(),
-            ('0' + date.getMonth()).slice(-2),
-            ('0' + date.getDate()).slice(-2)
-          ].join('-')
-        );
-        field(
-          form,
-          'message',
-          JSON.stringify(queue, null, '  ')
-        );
-        field(
-          form,
-          'after',
-          'https://nohum.world/#sent'
-        );
-        form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
-        form.submit();
-        setTimeout(resolve, smallDelay);
-      });
+
+    function getInfo(m) {
+      return 'GPS accuracy: ' + m.toFixed(2) + ' meters';
     }
+
+    function post() {
+      send.disabled = true;
+      var date = new Date;
+      var form = document.body.appendChild(document.createElement('form'));
+      form.style.cssText = 'position:fixed;left:-1000px;top:-1000px;';
+      form.target = '_self';
+      form.method = 'post';
+      form.action = 'https://jumprock.co/mail/nohum';
+      field(
+        form,
+        'subject',
+        'No Hum World - Coordinates @ ' + [
+          date.getFullYear(),
+          ('0' + date.getMonth()).slice(-2),
+          ('0' + date.getDate()).slice(-2)
+        ].join('-')
+      );
+      field(
+        form,
+        'message',
+        JSON.stringify(
+          collection,
+          null,
+          '  '
+        ).replace(/\n/g, '<br>')
+      );
+      field(
+        form,
+        'after',
+        location.protocol + '//' + location.host + '/#sent'
+      );
+      form.submit();
+    }
+
+    function online() {
+      if (collection.length && navigator.onLine)
+        send.disabled = false;
+    }
+
   }
 );
