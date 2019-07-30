@@ -2,11 +2,8 @@ addEventListener(
   'load',
   function () {
     document.documentElement.style.opacity = 1;
-    if('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js');
-    }
-    
+    if('serviceWorker' in navigator)
+      navigator.serviceWorker.register('/sw.js');
   }
 );
 
@@ -16,7 +13,7 @@ addEventListener(
     var minZoom = 2;
     var maxZoom = 18;
     var smallDelay = 2500;
-    var delay = 30000;
+    var delay = 60000;
     var mapCenter = [51.505, -0.09];
     var zoom = minZoom;
     var geolocation = navigator.geolocation;

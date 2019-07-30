@@ -1,5 +1,5 @@
-var version = 0;
-var db = caches.open('nohum.world.' + version);
+const version = 1;
+const db = caches.open('nohum.world.' + version);
 
 addEventListener('install', event => {
   event.waitUntil(
@@ -15,7 +15,7 @@ addEventListener('install', event => {
         '/js/index.js',
         '/js/leaflet.js',
         '/css/bulma.css',
-        '/css/leaflet.css',
+        '/css/leaflet.css'
       ])
     )
   );
