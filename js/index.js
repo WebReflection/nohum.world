@@ -1,4 +1,14 @@
-addEventListener('load', function () { document.documentElement.style.opacity = 1; });
+addEventListener(
+  'load',
+  function () {
+    document.documentElement.style.opacity = 1;
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js');
+    }
+    
+  }
+);
 
 addEventListener(
   'DOMContentLoaded',
