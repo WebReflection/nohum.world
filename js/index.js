@@ -13,7 +13,7 @@ addEventListener(
     var minZoom = 2;
     var maxZoom = 18;
     var smallDelay = 2500;
-    var delay = 60000;
+    var delay = 45000;
     var mapCenter = [51.505, -0.09];
     var zoom = minZoom;
     var geolocation = navigator.geolocation;
