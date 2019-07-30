@@ -4,7 +4,7 @@ addEventListener(
   'DOMContentLoaded',
   function () {
     var minZoom = 2;
-    var maxZoom = 20;
+    var maxZoom = 18;
     var smallDelay = 2500;
     var delay = 30000;
     var mapCenter = [51.505, -0.09];
