@@ -27,7 +27,8 @@ addEventListener('fetch', event => {
     db.then(cache => cache.match(request).then(
       response => response || fetch(request).then(
         response => {
-          cache.put(request, response.clone());
+          if (200 <= response.status && response.status < 400)
+            cache.put(request, response.clone());
           return response;
         }
       )
