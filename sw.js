@@ -1,4 +1,4 @@
-const version = 1;
+const version = 2;
 const db = caches.open('nohum.world.' + version);
 
 addEventListener('install', event => {
