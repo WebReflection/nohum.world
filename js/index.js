@@ -5,7 +5,7 @@
   var maxZoom = 18;
   var smallDelay = 2500;
   var delay = 45000;
-  var mapCenter = [51.505, -0.09];
+  var mapCenter = [30, -30];
 
   addEventListener(
     'load',
